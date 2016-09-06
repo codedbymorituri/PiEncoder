@@ -1,5 +1,5 @@
 /*
-PiEncoder - An FFmpeg front end to encode video and audio on your Rappberry Pi.
+PiEncoder - An FFmpeg front end to encode video and audio on your Raspberry Pi.
 Copyright (C) 2016 morituri
 
 This program is free software: you can redistribute it and/or modify

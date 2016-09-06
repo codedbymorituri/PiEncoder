@@ -1,5 +1,5 @@
 /*
-PiEncoder - An FFmpeg front end to encode video and audio on your Rappberry Pi.
+PiEncoder - An FFmpeg front end to encode video and audio on your Raspberry Pi.
 Copyright (C) 2016 morituri
 
 This program is free software: you can redistribute it and/or modify
@@ -221,47 +221,54 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveActionPerformed
-        int SelectedIndex = jList1.getSelectedIndex();
-        if (SelectedIndex > -1) {
-            listModel.remove(SelectedIndex);
-        }
+        RemoveDragAndDropItem();
+//        int SelectedIndex = jList1.getSelectedIndex();
+//        if (SelectedIndex > -1) {
+//            listModel.remove(SelectedIndex);
+//        }
     }//GEN-LAST:event_jButtonRemoveActionPerformed
 
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        listModel.removeAllElements();
+        ClearAllDragAndDropItems();
+//        listModel.removeAllElements();
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     private void jButtonConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConvertActionPerformed
-        if (ValidateData() == false) {
-            return;
-        }
-        Index = -1;
-        ToggleControls(false);
-        GetConversionArguments();
-        Start();
+        InitiateConversion();
+//        if (ValidateData() == false) {
+//            return;
+//        }
+//        Index = -1;
+//        ToggleControls(false);
+//        GetConversionArguments();
+//        Start();
     }//GEN-LAST:event_jButtonConvertActionPerformed
 
     private void jMenuItemDragAndDropFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDragAndDropFilterActionPerformed
-       DnDFilter f = new DnDFilter();
-       f.setVisible(true);
+        UpdateDragAndDropFilter();
+//       DnDFilter f = new DnDFilter();
+//       f.setVisible(true);
     }//GEN-LAST:event_jMenuItemDragAndDropFilterActionPerformed
 
     private void jMenuItemConversionProfilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConversionProfilesActionPerformed
-      Profiles f = new Profiles(this);
-      f.setVisible(true);
+        UpdateConversionProfiles();
+//      Profiles f = new Profiles(this);
+//      f.setVisible(true);
     }//GEN-LAST:event_jMenuItemConversionProfilesActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        System.exit(0);
+        CloseApplication();
+//        System.exit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        try {
-            int SelectionIndex = jComboBox1.getSelectedIndex();
-            this.jLabelFileName.setText(Config.EncodingProfiles.get(SelectionIndex));
-        }
-        catch (Exception ex) {
-        }
+        GetComboBoxSelection();
+//        try {
+//            int SelectionIndex = jComboBox1.getSelectedIndex();
+//            this.jLabelFileName.setText(Config.EncodingProfiles.get(SelectionIndex));
+//        }
+//        catch (Exception ex) {
+//        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -318,6 +325,51 @@ public class GUI extends javax.swing.JFrame {
     
 ////////////////////////////////////////////////////////////////////////////////
     
+    
+    private void RemoveDragAndDropItem() {
+        int SelectedIndex = jList1.getSelectedIndex();
+        if (SelectedIndex > -1) {
+            listModel.remove(SelectedIndex);
+        }       
+     }
+    
+    private void ClearAllDragAndDropItems() {
+        listModel.removeAllElements();        
+    }
+    
+    private void InitiateConversion() {
+        if (ValidateData() == false) {
+            return;
+        }
+        Index = -1;
+        ToggleControls(false);
+        GetConversionArguments();
+        Start();        
+    }
+    
+    private void UpdateDragAndDropFilter() {
+       DnDFilter f = new DnDFilter();
+       f.setVisible(true);
+    }   
+    
+    private void UpdateConversionProfiles() {
+        Profiles f = new Profiles(this);
+        f.setVisible(true);        
+    }
+    
+    private void CloseApplication() {
+        System.exit(0);
+    }
+    
+    private void GetComboBoxSelection() {
+        try {
+            int SelectionIndex = jComboBox1.getSelectedIndex();
+            this.jLabelFileName.setText(Config.EncodingProfiles.get(SelectionIndex));
+        }
+        catch (Exception ex) {
+        }        
+    }
+
     private boolean CheckForConfigFile() {
         try {
             Config.ConfigFile = new File(URLDecoder.decode(Config.ConfigFile, "UTF-8")).toString();
