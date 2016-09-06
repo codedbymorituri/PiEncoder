@@ -1,5 +1,5 @@
 /*
-PiEncoder - Written as part of my project for using FFmpeg to encode video and audio on my Raspberry Pi.
+PiEncoder - Written as part of my project for using FFmpeg to encode video and audio on a Raspberry Pi.
 Copyright (C) 2016 morituri
 
 This program is free software: you can redistribute it and/or modify
@@ -222,53 +222,30 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveActionPerformed
         RemoveDragAndDropItem();
-//        int SelectedIndex = jList1.getSelectedIndex();
-//        if (SelectedIndex > -1) {
-//            listModel.remove(SelectedIndex);
-//        }
     }//GEN-LAST:event_jButtonRemoveActionPerformed
 
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
         ClearAllDragAndDropItems();
-//        listModel.removeAllElements();
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     private void jButtonConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConvertActionPerformed
         InitiateConversion();
-//        if (ValidateData() == false) {
-//            return;
-//        }
-//        Index = -1;
-//        ToggleControls(false);
-//        GetConversionArguments();
-//        Start();
     }//GEN-LAST:event_jButtonConvertActionPerformed
 
     private void jMenuItemDragAndDropFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDragAndDropFilterActionPerformed
         UpdateDragAndDropFilter();
-//       DnDFilter f = new DnDFilter();
-//       f.setVisible(true);
     }//GEN-LAST:event_jMenuItemDragAndDropFilterActionPerformed
 
     private void jMenuItemConversionProfilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConversionProfilesActionPerformed
         UpdateConversionProfiles();
-//      Profiles f = new Profiles(this);
-//      f.setVisible(true);
     }//GEN-LAST:event_jMenuItemConversionProfilesActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
         CloseApplication();
-//        System.exit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         GetComboBoxSelection();
-//        try {
-//            int SelectionIndex = jComboBox1.getSelectedIndex();
-//            this.jLabelFileName.setText(Config.EncodingProfiles.get(SelectionIndex));
-//        }
-//        catch (Exception ex) {
-//        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -331,11 +308,11 @@ public class GUI extends javax.swing.JFrame {
         if (SelectedIndex > -1) {
             listModel.remove(SelectedIndex);
         }       
-     }
+     }//End Sub
     
     private void ClearAllDragAndDropItems() {
         listModel.removeAllElements();        
-    }
+    }//End Sub
     
     private void InitiateConversion() {
         if (ValidateData() == false) {
@@ -345,21 +322,21 @@ public class GUI extends javax.swing.JFrame {
         ToggleControls(false);
         GetConversionArguments();
         Start();        
-    }
+    }//End Sub
     
     private void UpdateDragAndDropFilter() {
        DnDFilter f = new DnDFilter();
        f.setVisible(true);
-    }   
+    }//End Sub   
     
     private void UpdateConversionProfiles() {
         Profiles f = new Profiles(this);
         f.setVisible(true);        
-    }
+    }//End Sub
     
     private void CloseApplication() {
         System.exit(0);
-    }
+    }//End Sub
     
     private void GetComboBoxSelection() {
         try {
@@ -368,7 +345,7 @@ public class GUI extends javax.swing.JFrame {
         }
         catch (Exception ex) {
         }        
-    }
+    }//End Sub
 
     private boolean CheckForConfigFile() {
         try {
@@ -400,10 +377,10 @@ public class GUI extends javax.swing.JFrame {
     public void UpdateComboBox() {
         this.jComboBox1.removeAllItems();
         String ComboDescription;
-        for (int Index = 0; Index < Config.EncodingDescriptions.size(); Index++) {
-            ComboDescription = Config.EncodingDescriptions.get(Index)
+        for (int i = 0; i < Config.EncodingDescriptions.size(); i++) {
+            ComboDescription = Config.EncodingDescriptions.get(i)
             + " ("
-            + Config.EncodingExtensions.get(Index)
+            + Config.EncodingExtensions.get(i)
             + ")";        
             this.jComboBox1.addItem(ComboDescription);
         }
@@ -492,6 +469,7 @@ public class GUI extends javax.swing.JFrame {
         Path path = Paths.get(FilePath);
         this.jLabelFileName.setText(path.getFileName().toString());
         try {
+            // use URLEncode / Decode ??
             String xFilePath = FilePath.replace(" ","[SPACEREPLACER]");
             String ffmpegArguments = ConversionArguments.replace("[FILEPATH]", xFilePath);
             String[] Params = ffmpegArguments.split(" ");
@@ -504,9 +482,9 @@ public class GUI extends javax.swing.JFrame {
             new Thread() {
                 @Override
                 public void run() {
-                    Scanner sc = new Scanner(p.getErrorStream());
+                    Scanner s = new Scanner(p.getErrorStream());
                     Pattern RegexDuration = Pattern.compile("(?<=Duration: )[^,]*");
-                    String Duration = sc.findWithinHorizon(RegexDuration, 0);
+                    String Duration = s.findWithinHorizon(RegexDuration, 0);
                     if (Duration == null) {
                         t.Stop();
                         Start();
@@ -521,7 +499,7 @@ public class GUI extends javax.swing.JFrame {
                     String[] SplitMatch;
                     double Progress;
                     double PercentageDone;
-                    while (null != (Match = sc.findWithinHorizon(RegexTime, 0))) {
+                    while (null != (Match = s.findWithinHorizon(RegexTime, 0))) {
                         SplitMatch = Match.split(":");
                         Progress = Integer.parseInt(SplitMatch[0]) * 3600 +
                         Integer.parseInt(SplitMatch[1]) * 60 +
