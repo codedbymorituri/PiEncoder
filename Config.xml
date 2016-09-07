@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+    
+    <DragAndDrop>
+        <Filter>avi</Filter>
+    </DragAndDrop>
+    
+    <DragAndDrop>    
+        <Filter>flv</Filter>
+    </DragAndDrop>
+    
+    <DragAndDrop>
+        <Filter>mkv</Filter>
+    </DragAndDrop>
+    
+    <DragAndDrop>
+        <Filter>mp4</Filter>
+    </DragAndDrop>
+    
+    <EncodingProfile>
+        <Description>Convert Video to x264</Description>
+        <Profile>-codec:v libx264 -codec:a copy</Profile>
+        <Extension>mp4</Extension>
+    </EncodingProfile>
+    
+    <EncodingProfile>    
+        <Description>Convert Audio to mp3</Description>
+        <Profile>-codec:v copy -codec:a libmp3lame</Profile>
+        <Extension>mp4</Extension>
+    </EncodingProfile>
+    
+    <EncodingProfile>    
+        <Description>Convert Video and Audio</Description>
+        <Profile>-codec:v libx264 -codec:a libmp3lame</Profile> 
+        <Extension>mp4</Extension>
+    </EncodingProfile>
+
+</root>
