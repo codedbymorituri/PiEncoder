@@ -363,7 +363,7 @@ public class Profiles extends javax.swing.JFrame {
 
     private void CheckSaveOnExit () {
         int YesNo = (JOptionPane.showConfirmDialog(null, "Save Changes", "PiEncoder", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE));
-        if (YesNo == 0) {                                      //Yes = 0  No = 1   
+        if (YesNo == JOptionPane.YES_OPTION) {
             SaveChanges();
         }
     }//End Sub    

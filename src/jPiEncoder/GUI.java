@@ -72,12 +72,17 @@ public class GUI extends javax.swing.JFrame {
         jMenuItemConversionProfiles = new javax.swing.JMenuItem();
         jMenuItemExit = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("PiEncoder 0.3.0");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("PiEncoder 0.3.1");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setLocation(new java.awt.Point(100, 100));
         setMinimumSize(null);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -249,6 +254,10 @@ public class GUI extends javax.swing.JFrame {
         GetComboBoxSelection();
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        CloseApplication();
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonClear;
     private javax.swing.JButton jButtonConvert;
@@ -303,7 +312,7 @@ public class GUI extends javax.swing.JFrame {
     
 ////////////////////////////////////////////////////////////////////////////////
     
-    
+         
     private void RemoveDragAndDropItem() {
         int SelectedIndex = jList1.getSelectedIndex();
         if (SelectedIndex > -1) {
@@ -322,7 +331,12 @@ public class GUI extends javax.swing.JFrame {
         Index = -1;
         ToggleControls(false);
         GetConversionArguments();
-        Start();        
+        new Thread() {
+            @Override
+            public void run() {
+                Start();
+            }
+        }.start();
     }//End Sub
     
     private void UpdateDragAndDropFilter() {
@@ -336,9 +350,24 @@ public class GUI extends javax.swing.JFrame {
     }//End Sub
     
     private void CloseApplication() {
-        System.exit(0);
+        if (Encoding == true) {
+            if (ConfirmExit() == false) {
+                return;
+            }
+        }
+        System.exit(0);   
     }//End Sub
     
+    private boolean ConfirmExit() {
+        int YesNo = (JOptionPane.showConfirmDialog(null, "Encoder is still running \nAre you sure you want to quit", "PiEncoder", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE));
+        if (YesNo == JOptionPane.YES_OPTION) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }//End Sub
+        
     private void GetComboBoxSelection() {
         try {
             int SelectionIndex = jComboBox1.getSelectedIndex();
@@ -385,10 +414,6 @@ public class GUI extends javax.swing.JFrame {
             + ")";        
             this.jComboBox1.addItem(ComboDescription);
         }
-//
-//      for (String Item : Config.EncodingDescriptions) {
-//          this.jComboBox1.addItem(Item);
-//      }
     }//End Sub
   
     private DefaultListModel listModel;
@@ -451,18 +476,20 @@ public class GUI extends javax.swing.JFrame {
     
     private int Index;
     private void Start() {
-        Index = Index + 1;
-        ListModel model = jList1.getModel();
-        if (Index == model.getSize()) {
-            ToggleControls(true);
-            return;
-        }
-        jList1.setSelectedIndex(Index);
-        String FilePath =  model.getElementAt(Index).toString(); 
-        DoConversion(FilePath);
+                Index = Index + 1;
+                ListModel model = jList1.getModel();
+                if (Index == model.getSize()) {
+                    UpdateTimeRemaining("00;00;00");
+                    ToggleControls(true);
+                    return;
+                }
+                jList1.setSelectedIndex(Index);
+                String FilePath =  model.getElementAt(Index).toString(); 
+                DoConversion(FilePath);
     }//End Sub
     
-    private AppTimer t = new AppTimer(this);
+    private boolean Encoding = false;
+    private AppTimer timer = new AppTimer(this);
     private void DoConversion(String FilePath) {
         this.jProgressBar1.setValue((0));
         this.jProgressBar1.setMaximum(100);
@@ -478,16 +505,16 @@ public class GUI extends javax.swing.JFrame {
                 Params[i] = Params[i].replace("[SPACEREPLACER]", " "); 
             }
             ProcessBuilder pb = new ProcessBuilder(Params);
-            t.Start();
+            Encoding = true;
+            timer.Start();
             Process p = pb.start();
-            new Thread() {
-                @Override
-                public void run() {
-                    Scanner s = new Scanner(p.getErrorStream());
+                    Scanner Scan = new Scanner(p.getErrorStream());
                     Pattern RegexDuration = Pattern.compile("(?<=Duration: )[^,]*");
-                    String Duration = s.findWithinHorizon(RegexDuration, 0);
+                    String Duration = Scan.findWithinHorizon(RegexDuration, 0);
                     if (Duration == null) {
-                        t.Stop();
+                        Encoding = false;
+                        timer.Stop();
+                        Scan.close();
                         Start();
                         //throw new RuntimeException();
                     }
@@ -500,20 +527,20 @@ public class GUI extends javax.swing.JFrame {
                     String[] SplitMatch;
                     double Progress;
                     double PercentageDone;
-                    while (null != (Match = s.findWithinHorizon(RegexTime, 0))) {
+                    while (null != (Match = Scan.findWithinHorizon(RegexTime, 0))) {
                         SplitMatch = Match.split(":");
                         Progress = Integer.parseInt(SplitMatch[0]) * 3600 +
                         Integer.parseInt(SplitMatch[1]) * 60 +
                         Double.parseDouble(SplitMatch[2]);
                         PercentageDone = Progress/TotalSeconds * 100;
-                        t.PercentageDone = PercentageDone;
+                        timer.PercentageDone = PercentageDone;
                         jProgressBar1.setValue(((int)PercentageDone));
                     }
                     jProgressBar1.setValue(100);
-                    t.Stop();
+                    Encoding = false;
+                    timer.Stop();
+                    Scan.close();
                     Start();
-                }
-            }.start();
         }
         catch(Exception ex) {
             //throw new RuntimeException();
