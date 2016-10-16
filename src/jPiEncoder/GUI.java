@@ -537,4 +537,4 @@ public class GUI extends javax.swing.JFrame {
         this.jLabelTimeRemaining.setText(LabelText);
     }//End Sub
 
-}//End Class  
+}// End Class
