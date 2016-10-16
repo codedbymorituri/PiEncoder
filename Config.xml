@@ -27,7 +27,7 @@
     <EncodingProfile>    
         <Description>Convert Audio to mp3</Description>
         <Profile>-codec:v copy -codec:a libmp3lame</Profile>
-        <Extension>mp4</Extension>
+        <Extension>xp45</Extension>
     </EncodingProfile>
     
     <EncodingProfile>    
