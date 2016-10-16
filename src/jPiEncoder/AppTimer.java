@@ -71,7 +71,7 @@ public class AppTimer implements ActionListener{
         return String.format("%02d:%02d:%02d", Hours, Minutes, Seconds);
     }
     
-}//End Class
+}// End Class
 
 
 
